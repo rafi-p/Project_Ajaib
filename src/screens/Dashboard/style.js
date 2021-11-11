@@ -12,6 +12,10 @@ const Content = styled.div`
                 margin-right: 0px;
             }
         }
+        @media ${Sizes.sm} {
+            display: flex;
+            justify-content: center;
+        }
     }
     & > * {
         margin-bottom: 15px;
@@ -22,6 +26,8 @@ const Content = styled.div`
     }
     transition: opacity .3s;
     opacity: ${props => (props.loading ? '.3' : '1')};
+    pointer-events: ${props => (props.loading ? 'none' : 'inherit')};
+    cursor: ${props => (props.loading ? 'not-allowed' : 'inherit')};
 `;
 
 export {

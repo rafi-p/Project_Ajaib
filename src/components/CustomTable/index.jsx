@@ -18,9 +18,6 @@ import {
 } from './style';
 
 const TableOverview = props => {
-  const [isRemember, setIsRemember] = useState(false);
-  const [rowsOrPage, setRowsOrPage] = useState([]);
-  const [selectedRowClick, setSelectedRowClick] = useState([]);
   const {
     columns,
     data,
@@ -35,39 +32,6 @@ const TableOverview = props => {
     pageCount: controlledPageCount,
   } = props;
 
-  // eslint-disable-next-line react/display-name
-  const IndeterminateCheckbox = React.forwardRef(
-    ({ indeterminate, ...rest }, ref) => {
-      const defaultRef = React.useRef();
-      const resolvedRef = ref || defaultRef;
-      // console.log({ rest, defaultRef, resolvedRef, ref });
-
-      React.useEffect(() => {
-        resolvedRef.current.indeterminate = indeterminate;
-      }, [resolvedRef, indeterminate]);
-
-      return (
-        // <>
-        //   <input type='checkbox' ref={ resolvedRef } { ...rest } />
-        // </>
-        <CheckBox
-          isRemember = { rest.checked }
-        >
-          <input
-            type='checkbox'
-            id={ `test${rest.idCheck}` }
-            ref={ resolvedRef } { ...rest }
-            // defaultChecked={props.defaultChecked}
-            // onChange={ handleCheck }
-          />
-          <label htmlFor={ `test${rest.idCheck}` }/>
-        </CheckBox>
-      );
-    }
-  );
-
-  // IndeterminateCheckbox.displayName = 'IndeterminateCheckbox';
-
 
 
   const {
@@ -80,187 +44,13 @@ const TableOverview = props => {
     footerGroups,
     selectedFlatRows,
     state: { selectedRowIds, pageIndex, pageSize },
-  } = !props.isSelectable
-  ? useTable(
+  } = useTable(
     {
       columns,
       data
     },
     useSortBy,
-  )
-  : useTable(
-    {
-      columns,
-      data,
-      initialState: { pageIndex: pageIndexParent },
-      manualPagination: true,
-      pageCount: total,
-      autoResetSelectedRows: false,
-      getRowId: useCallback(row => row.key, []),
-    },
-    useSortBy,
-    usePagination,
-    useRowSelect,
-    hooks => {
-      hooks.visibleColumns.push(columns => [
-        {
-          id: 'selection',
-          // eslint-disable-next-line react/display-name
-          Cell: ({ row }) => {
-            // console.log('conditional data', { props, row, text: row.original.submission_status.props.children[0].props.text, role: props.role, isTrue: props.role === 2 && row.original.submission_status.props.children[0].props.text === 'Requested' });
-            if (
-              (props.role === 2 && row.original.submission_status.props.children[0].props.text === 'Requested')
-              ||
-              (props.role === 3 && row.original.shipment_status.props.children[0].props.text === 'In-Transit')
-            ) {
-              return (
-                  <div>
-                    <IndeterminateCheckbox
-                      idCheck={ row.index }
-                      { ...row.getToggleRowSelectedProps() }
-                    />
-                  </div>
-              );
-            } else {
-              return (
-                <div />
-              );
-            }
-          },
-        },
-        ...columns,
-      ]);
-    }
   );
-
-    // const [sortedHeader, setSortedHeader] = useState({
-
-    // });
-
-
-    // console.log({
-    //   selectedFlatRows: selectedFlatRows.map(
-    //     d => d.original
-    //   ),
-    //   selectedRowIds
-    // });
-
-  // useEffect(() => {
-  //   const parsingRows = selectedFlatRows
-  //   ? selectedFlatRows.map(
-  //     d => d.original
-  //   )
-  //   : [];
-  //   props.setSelectedRows && props.setSelectedRows(parsingRows);
-  // }, [selectedFlatRows]);
-
-  useEffect(() => {
-    if (props.role === 1) {
-      // alert('ini rows');
-      setRowsOrPage(rows);
-    } else {
-      // alert('ini page');
-      setRowsOrPage(page);
-    }
-  }, [
-    props.role,
-    data
-  ]);
-
-  console.log('cust row page', { rowsOrPage, page });
-
-  useEffect(() => {
-    let temp = [];
-    if (selectedRowIds) {
-      if (Object.keys(selectedRowIds).length !== 0) {
-        const entries = Object.entries(selectedRowIds);
-        if (entries.length !== selectedRowClick.length) {
-          let temp = selectedRowClick;
-          temp = temp.filter(a => {
-            return entries.map(b => { return b[0]; }).includes(a.key);
-            // !entries.map(b => Number(b[0])).includes(a.key)
-          });
-          setSelectedRowClick(temp);
-        }
-        entries.forEach((el, i) => {
-          console.log('entries rowsId', { el });
-          if (el[1]) {
-            page.forEach((el2, j) => {
-              console.log('entries rowsId', { el2 });
-
-              if ((el[0] === el2.id) && el2.isSelected) {
-                const found = selectedRowClick.some(el => {
-                  console.log('entries rowsId some', { el: el.key, el2: el2.id });
-                  return el.key === el2.id;
-                });
-                console.log('entries rowsId', { el: el, el2: el2, original: el2.original, i, j, found });
-                // add(selectedRowClick,  el2.id, el2);
-                if (!found) {
-                  let temp = [
-                    ...selectedRowClick,
-                    el2.original
-                  ];
-                  // if (temp.length > 1) {
-                    temp = temp.filter(a => {
-                      console.log({ a });
-                      return entries.map(b => { return b[0]; }).includes(a.key);
-                      // !entries.map(b => Number(b[0])).includes(a.key)
-                    });
-                    // console.log('entries rowsId', { tes });
-
-                  // }
-                  // setSelectedRowClick([
-                  //   ...selectedRowClick,
-                  //   el2.original
-                  // ]);
-                  console.log('ONBOARDING MULTIPLE TEMP', { temp });
-                  setSelectedRowClick(temp);
-                }
-                // temp.push(el2.original);
-              }
-            });
-
-            // let temp = selectedRowClick.filter(n => !el[0].includes(n.key));
-            // console.log('entries rowsId', { temp });
-          }
-          // else {
-          //   let temp = selectedRowClick;
-          //   temp = temp.filter(a => {
-          //     return entries.map(b => { return b[0]; }).includes(a.key);
-          //     // !entries.map(b => Number(b[0])).includes(a.key)
-          //   });
-          //   setSelectedRowClick(temp);
-          // }
-        });
-      }
-
-      // setSelectedRowClick(temp);
-      // temp = selectedRowClick.filter((thing, index, self) =>
-      //   index === self.findIndex(t => (
-      //     t.key === thing.key
-      //   ))
-      // );
-      // console.log({ temp });
-      // // setSelectedRowClick(temp);
-
-      // if (selectedRowClick.length > 1) {
-        // temp = [...selectedRowClick.reduce(
-        //   (a, b) => a.set(b.key, Object.assign((a.get(b.key) || {}), b)),
-        //   new Map
-        // ).values()];
-        // temp.shift();
-        // setSelectedRowClick(temp);
-      // }
-      // props.setSelectedRows && props.setSelectedRows(selectedRowClick);
-    }
-  }, [selectedRowIds, page]);
-
-  useEffect(() => {
-    props.setSelectedRows && props.setSelectedRows(selectedRowClick);
-  }, [selectedRowClick]);
-
-  // console.log('ONBOARDING MULTIPLE', { selectedRowIds, selectedFlatRows, rows, page, rowsOrPage, selectedRowClick });
-  console.log('ONBOARDING MULTIPLE selectedRowClick', { selectedRowClick, selectedRowIds });
 
   return (
     <TableWrapper

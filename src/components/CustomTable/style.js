@@ -14,7 +14,10 @@ const TableWrapper = styled.div`
 
     /* overflow-x: scroll; // untuk tabel panjang */
 
-
+    @media ${Sizes.sm} {
+        width: 100vw;
+        overflow-y: scroll;
+    }
 
     .tableWrap {
         display: block;
@@ -146,6 +149,11 @@ const TableWrapper = styled.div`
                 }
             }
 
+        }
+        @media ${Sizes.sm} {
+            font-size: 14px;
+            font-weight: 700;
+            color: #949494;
         }
     }
 

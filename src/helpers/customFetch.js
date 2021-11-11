@@ -46,7 +46,6 @@ const customFetch = async(url, method, data, isUpload) => {
         break;
 
       case 404:
-        // console.log('response', response);
         // window.location.replace('/not-found');
         return await response;
         break;

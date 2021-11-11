@@ -15,7 +15,8 @@ const Navbar = styled.div`
     z-index: 2;
 
     @media ${Sizes.sm} {
-        padding: 15px 17px 15px 90px;
+        padding: 15px 17px 15px 17px;
+        justify-content: center;
     }
 
     .logoNavbar {
@@ -23,7 +24,7 @@ const Navbar = styled.div`
         width: auto;
 
         @media ${Sizes.sm} {
-            width: 161.25px;
+            width: auto;
             height: 24px;
         }
     }

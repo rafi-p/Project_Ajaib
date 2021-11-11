@@ -46,8 +46,6 @@ const Dashboard = props => {
   // MAPDISPATCH
   const dispatch = useDispatch();
   const dataUser = useSelector(state => state.randomUser.data);
-  // console.log('🚀 ~ file: index.jsx ~ line 36 ~ dataUser', { dataUser });
-  const paginationUser = useSelector(state => state.randomUser.pagination);
   const getRandomUsers = dispatch(randomUserActions.getRandomUsers);
 
   useEffect(() => {
@@ -59,7 +57,7 @@ const Dashboard = props => {
     getRandomUsers(payload);
   }, []);
 
-  useEffect(() => {
+  const actionGetRandomUsers = () => {
     let payload = {
       page,
       results: limit,
@@ -76,18 +74,23 @@ const Dashboard = props => {
     .finally(() => {
       setLoading(false);
     });
+  };
 
-    if (selectedOptGender.value) {
-      setSearchUser('');
-    }
+  useEffect(() => {
 
-  }, [page, selectedOptGender]);
+    actionGetRandomUsers();
+
+  }, [page]);
+
+  useEffect(() => {
+    setSearchUser('');
+    setPage(1);
+  }, [selectedOptGender]);
 
   const handleSearchInput = () => {
     const newData =  dataMain ? dataMain.filter(item =>
         // item.name.includes(searchUser)
         item.name.toLowerCase().includes(searchUser && searchUser.toLowerCase())
-        // console.log('item', { item })
       ) : dataMain;
     setDataSearch(newData);
   };
@@ -107,40 +110,12 @@ const Dashboard = props => {
   }, [dataUser]);
 
   const rowSpanAdd = (col, row, isHide) => {
-    // if (isHide) {
-    //   return (col === 0 &&  row === 1) || (col === 1 &&  row === 1) || (col === 2 &&  row === 1);
-    // } else {
-
-    //   return (col === 0 &&  row === 0) || (col === 1 &&  row === 0) || (col === 2 &&  row === 0);
-    // }
-
     return false;
   };
 
   const widthCustom = col => {
     let width = '';
     switch (col) {
-      case 0:
-        width = 'w-15';
-        break;
-      case 1:
-        width = 'w-20';
-        break;
-      case 2:
-        width = 'w-20';
-        break;
-      case 3:
-        width = 'w-25';
-        break;
-      case 4:
-        width = 'w-10';
-        break;
-      case 5:
-        width = 'w-20';
-        break;
-      case 6:
-        width = 'w-10';
-        break;
       default:
         break;
     }
@@ -166,27 +141,6 @@ const Dashboard = props => {
     let colorText = Colors.black.default;
 
     switch (data) {
-      case 'Declined':
-        colorText = Colors.red.default;
-        break;
-      case 'Approved':
-        colorText = Colors.green.green2;
-        break;
-      case 'Received':
-        colorText = Colors.green.green2;
-        break;
-      case 'Pos':
-        colorText = Colors.green.green2;
-        break;
-      case 'Requested':
-        colorText = Colors.orange.bright;
-        break;
-      case 'Prepared':
-        colorText = Colors.orange.bright;
-        break;
-      case 'In-Transit':
-        colorText = Colors.blue.blue1;
-        break;
       default:
         break;
     }
@@ -195,11 +149,6 @@ const Dashboard = props => {
   };
 
   const whichSorted = (headerGroup, headerGroups, col, row) => {
-    // if (dataMain && dataMain.length < 1) {
-    //   return false;
-    // } else {
-    //   return (headerGroup.headers.length - 1 !== col  &&  col !== 0);
-    // }
     return false;
   };
 
@@ -303,13 +252,6 @@ const Dashboard = props => {
   };
 
   const dataParsing = el => {
-    // let payload = {
-    //   username: tdData2({ name: el.username }),
-    //   name: tdData2({ name: el.name }),
-    //   email: tdData2({ name: el.email }),
-    //   gender: tdData2({ name: el.gender }),
-    //   registered: tdData2({ name: el.registered }),
-    // };
     let payload = {
       username: el.username,
       name: el.name,
@@ -365,7 +307,7 @@ const Dashboard = props => {
             closedArrow={ <img src={ Images.icons.up } /> }
             openArrow={ <img src={ Images.icons.downGreyDropdown } /> }
             // styleType='modal'
-            width={ '200px' }
+            width={ isMobile ? '100px' : '200px' }
             // border={ true }
             height='40px'
             styling={ FontStyles.mediumL }
@@ -374,7 +316,7 @@ const Dashboard = props => {
             keyword={ searchUser }
             setKeyword={ setSearchUser }
             placeholder='Search name'
-            width= '300px'
+            width= { isMobile ? '100%' : '300px' }
             height={ '40px' }
             type='text'
             isSearch={ true }
@@ -383,7 +325,7 @@ const Dashboard = props => {
         </div>
         <CustomTable
           columns={ columns2 }
-          data={ searchUser ? dataSearch : dataMain }
+          data={ (searchUser) ? dataSearch : dataMain }
           headerProps={ headerProps }
           sortedHeader={ sortedHeader }
           setSortedHeader={ setSortedHeader }

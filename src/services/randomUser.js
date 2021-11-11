@@ -27,7 +27,6 @@ export const getRandomUsers = async(params, data) => {
     const response = await customFetch(`${Endpoints.url}/${uri}`, 'GET', data, false);
     // const response = await customFetch(`${Endpoints.url}${Endpoints.param.filterBrand}`, 'GET', data, false);
     const res = await response.json();
-    console.log({ res });
 
     if (res.results) {
       res.results = setData(res.results);
