@@ -77,15 +77,10 @@ const Dashboard = props => {
   };
 
   useEffect(() => {
+      actionGetRandomUsers();
+      setSearchUser('');
 
-    actionGetRandomUsers();
-
-  }, [page]);
-
-  useEffect(() => {
-    setSearchUser('');
-    setPage(1);
-  }, [selectedOptGender]);
+  }, [page, selectedOptGender]);
 
   const handleSearchInput = () => {
     const newData =  dataMain ? dataMain.filter(item =>
